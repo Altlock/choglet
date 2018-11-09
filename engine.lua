@@ -4,8 +4,13 @@ local function clearScreen()
    end
 end
 
-local function showSituation(locale)
+local function ask(question)
+   io.write(question .. " ")
+   io.flush()
+   return io.read()
+end
 
+local function showSituation(locale)
    print(locale.name)
    print()
    print(locale.situation)
@@ -21,17 +26,21 @@ end
 
 local function getChoice(location)
    local choice
-   repeat
-      io.write("What do you want to do? ")
-      io.flush()
-      choice = io.read()
-   until choice == "1" or choice == "2" or choice == "3" or choice == "exit"
+   while true do
+      choice = tonumber(ask("What do you want to do?"))
 
-   if choice == "exit" then
-      os.exit()
+      if choice == 0 then
+	 os.exit()
+      end
+
+      if choice == nil or choice < 0 or choice > 3 then
+	 print("That's not a choice")
+      elseif data[location.options[tonumber(choice)].loc] == nil then
+	 error("Choice contains no location!")
+      else
+	 return data[location.options[tonumber(choice)].loc]
+      end
    end
-   
-   return data[location.options[tonumber(choice)].loc]
 end
 
 local function go(locale)
@@ -41,10 +50,22 @@ local function go(locale)
    location = getChoice(locale)
 end
 
+local function startscreen()
+   print("\n\n")
+   print("To choose, enter either 1, 2 or 3.")
+   print("To exit the game, you can enter '0'")
+   print()
+   print("Press 'Enter' to start!")
+   
+   io.read()
+end
+
 function startGame(data)
-   gameFinished = false
-   location = data.Home
-   repeat
+	 startscreen()
+	 
+	 gameFinished = false
+	 location = data.Home
+	 repeat
       go(location)
    until gameFinished == true
 end
