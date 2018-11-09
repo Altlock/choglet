@@ -1,2 +1,2 @@
 # choglet
-CHOice Game Lua Engine Technology
+A small 'choose your own adventure'-like game 'engine'.
